@@ -2,7 +2,7 @@ import { auth, firestore } from '../config/firebase';
 import { ConfirmationResult, createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { User } from '../utils/types';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import axios from 'axios';
 
 /**
  * Sign up a new user and store their details in Firestore.
@@ -32,7 +32,14 @@ export const signUp = async (
     await setDoc(doc(firestore, 'users', uid), newUser);
 
     // Send OTP after user is created
-    await sendOtp(userInfo.phone);
+    // const otpSent = await sendOtp(userInfo.phone); // Await the OTP sending function
+
+    // if (!otpSent) {
+    //   console.error('Failed to send OTP');
+    //   return null;
+    // }
+
+    // console.log('OTP sent successfully');
 
     return userCredential;
   } catch (error) {
@@ -40,6 +47,7 @@ export const signUp = async (
     return null;
   }
 };
+
 
 /**
  * Log in an existing user.
@@ -72,18 +80,27 @@ export const login = async (email: string, password: string): Promise<User | nul
  * Sends OTP using Firebase Function
  * @param phoneNumber - The phone number to send OTP to.
  */
+const API_URL = 'http://localhost:5000/api'; // e.g., 'http://localhost:5000/api'
+interface SendOtpResponse {
+  success: boolean;
+  otp?: number;
+  message?: string;
+}
 // Export the sendOtp function
-export const sendOtp = async (phoneNumber: string) => {
-  const functions = getFunctions();
-  const sendOtpFunction = httpsCallable(functions, 'sendOtp');
-
+export const sendOtp = async (phone: string): Promise<number | null> => {
   try {
-    // Call the Firebase Cloud Function to send OTP
-    const response = await sendOtpFunction({ phoneNumber });
-    console.log('OTP sent successfully:', response); // Logs the success message
+    const response = await axios.post<SendOtpResponse>('http://192.168.55.243:5000/api/send-otp', { phone }, {
+      timeout: 60000,  // Set timeout to 10 seconds (10000ms)
+    });
+
+    if (response.data.success && response.data.otp) {
+      return response.data.otp; // OTP generated and returned from backend
+    } else {
+      throw new Error(response.data.message || 'Failed to send OTP');
+    }
   } catch (error) {
     console.error('Error sending OTP:', error);
-    throw new Error('Failed to send OTP');
+    throw error;
   }
 };
 

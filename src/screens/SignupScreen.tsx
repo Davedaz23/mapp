@@ -41,12 +41,35 @@ const SignUpScreen = () => {
       const user = await signUp(values.email, values.password, newUser);
       if (user) {
         console.log('User signed up:', user);
-
+    
         // Send OTP after successful signup
-        await sendOtp(values.phone);  // Call the sendOtp function
-
-        // Navigate to OTP verification screen
-        navigation.navigate('OtpVerification', { phone: values.phone });
+        try {
+          // Send OTP after successful signup
+          const otp = await sendOtp(values.phone);  // Call the sendOtp function
+          if (otp) {
+            // Handle OTP response
+            console.log('OTP sent:', otp);
+            // Proceed with navigation to OTP verification screen
+            navigation.navigate('OtpVerification', { phone: values.phone });
+          } else {
+            // Handle OTP sending failure
+            Toast.show({
+              type: 'error',
+              position: 'bottom',
+              text1: 'Error',
+              text2: 'Failed to send OTP. Please try again.',
+            });
+          }
+        } catch (error) {
+          console.error('Error during OTP sending', error);
+          Toast.show({
+            type: 'error',
+            position: 'bottom',
+            text1: 'Error',
+            text2: 'An error occurred. Please try again.',
+          });
+        }
+        
       } else {
         Toast.show({
           type: 'error',
@@ -73,6 +96,8 @@ const SignUpScreen = () => {
         });
       }
     }
+    
+    
   };
 
   return (
