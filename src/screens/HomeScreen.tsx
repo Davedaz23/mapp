@@ -2,59 +2,32 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigator'; // Import the type
-import { login } from '../services/authService'; // Your auth service
-import Header from './Header'; // Import the Header component
-import Contact from './ContactScreen'; // Keep this for navigational purposes
+import { RootStackParamList } from '../navigation/AppNavigator'; // Assuming you have this type in your navigation setup
+import { handleLogin } from '../services/UserService';
 
 const HomeScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleLogin = async () => {
-    setLoading(true);
-    const user = await login(email, password);
-    setLoading(false);
-
-    if (user) {
-      console.log('User logged in', user);
-      navigation.navigate('AppointmentList'); // No more TypeScript error!
-    } else {
-      setError('Invalid credentials');
-    }
+  const onLogin = () => {
+    handleLogin(phoneNumber, navigation, setError, setLoading);
   };
 
   return (
     <View style={styles.container}>
-      {/* Header Section */}
-      <Header />
-      {/* Contact Section */}
-      <Contact />
-
-      {/* Login Form */}
       <View style={styles.formContainer}>
+        <Text style={styles.title}>Enter Your Phone Number</Text>
         <TextInput
           style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
+          placeholder="Phone Number"
+          keyboardType="phone-pad"
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
         />
         {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Button title={loading ? 'Logging in...' : 'Login'} onPress={handleLogin} />
-
-        {/* Signup Button */}
-        <Text style={styles.signupText}>Don't have an account? Sign up here</Text>
-        <Button title="Create Account" onPress={() => navigation.navigate('SignUp')} />
+        <Button title={loading ? 'Logging in...' : 'Login'} onPress={onLogin} />
       </View>
     </View>
   );
@@ -63,30 +36,40 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start', // Align items to the top
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 10,
   },
   formContainer: {
-    width: '100%',
+    width: '90%',
     maxWidth: 400,
     alignItems: 'center',
-    marginTop: 20, // Add some margin to separate from Contact
+    padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   input: {
     width: '100%',
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 10,
+    padding: 12,
     borderRadius: 5,
+    marginBottom: 10,
+    textAlign: 'center',
   },
   error: {
     color: 'red',
     marginBottom: 10,
-  },
-  signupText: {
-    marginTop: 10,
-    fontSize: 14,
   },
 });
 

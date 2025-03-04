@@ -50,7 +50,7 @@ const SignUpScreen = () => {
             // Handle OTP response
             console.log('OTP sent:', otp);
             // Proceed with navigation to OTP verification screen
-            navigation.navigate('OtpVerification', { phone: values.phone });
+            // navigation.navigate('OtpVerification', { phone: values.phone });
           } else {
             // Handle OTP sending failure
             Toast.show({
