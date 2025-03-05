@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator'; // Assuming you have this type in your navigation setup
@@ -16,24 +16,31 @@ const HomeScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Enter Your Phone Number</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          keyboardType="phone-pad"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-        />
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Button title={loading ? 'Logging in...' : 'Login'} onPress={onLogin} />
+    <ImageBackground source={require('../assets/background.jpg')} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Enter Your Phone Number</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            keyboardType="phone-pad"
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+          />
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+          <Button title={loading ? 'Logging in...' : 'Login'} onPress={onLogin} />
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -45,7 +52,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
