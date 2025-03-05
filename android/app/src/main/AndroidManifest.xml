@@ -23,12 +23,17 @@
         </intent-filter>
       </activity>
       <service
-    android:name=".java.MyFirebaseMessagingService"
-    android:exported="false">
+    android:name="com.google.firebase.messaging.FirebaseMessagingService"
+    android:exported="true">
     <intent-filter>
         <action android:name="com.google.firebase.MESSAGING_EVENT" />
     </intent-filter>
 </service>
+
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     </application>
     
 </manifest>

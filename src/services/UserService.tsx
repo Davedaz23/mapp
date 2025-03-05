@@ -1,6 +1,6 @@
 import { firestore, auth } from '../config/firebase'; // Import your custom firestore instance and auth instance
-import { collection, doc, getDoc, setDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore'; // Import necessary functions
-import { signInWithPhoneNumber } from 'firebase/auth'; // Import the phone sign-in function
+//import { collection, doc, getDoc, setDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore'; // Import necessary functions
+import { collection, doc, getDoc, setDoc, serverTimestamp, query, where, getDocs } from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging'; // Import messaging
 
 export type User = {
@@ -74,7 +74,7 @@ export const handleLogin = async (
 
     const currentTime = new Date();
 
-    if (phoneDocSnap.exists()) {
+    if (phoneDocSnap.exists) {
       const data = phoneDocSnap.data();
       const expireTime = data?.expireTime.toDate(); // Convert Firestore timestamp
 
